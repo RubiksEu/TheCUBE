@@ -1,0 +1,7 @@
+{
+	"id":"Cube",
+	"address": "8.8.8.8",
+	"port": 5683,
+	"latitude":52.3638418,
+	"longitude":4.8942684
+}

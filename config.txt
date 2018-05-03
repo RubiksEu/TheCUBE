@@ -1,0 +1,77 @@
+{
+	"commands":
+	[
+		{
+		  "command": "AT+NRB",
+		  "delay": 5,
+		  "retries": 1,
+		  "purge":1
+		},
+		{
+		  "command": "AT+NCONFIG=\"AUTOCONNECT\",\"FALSE\"",
+		  "delay": 1,
+		  "retries": 3,
+		  "purge":0
+		},
+		{
+		  "command": "AT+NCONFIG=\"CR_0354_0338_SCRAMBLING\",\"TRUE\"",
+		  "delay": 1,
+		  "retries": 3,
+		  "purge":0
+		},
+		{
+		  "command": "AT+NCONFIG=\"CR_0859_SI_AVOID\",\"FALSE\"",
+		  "delay": 1,
+		  "retries": 3,
+		  "purge":0
+		},
+		{
+		  "command": "AT+CFUN=0",
+		  "delay": 2,
+		  "retries": 3,
+		  "purge":0
+		},
+		{
+		  "command": "AT+NCDP=\"8.8.8.8\"",
+		  "delay": 1,
+		  "retries": 3,
+		  "purge":0
+		},
+		{
+		  "command": "AT+CGDCONT=1,\"IP\",\"MOVISTAR.ES\"",
+		  "delay": 2,
+		  "retries": 3,
+		  "purge":0
+		},
+		{
+		  "command": "AT+CFUN=1",
+		  "delay": 2,
+		  "retries": 3,
+		  "purge":0
+		},
+		{
+		  "command": "AT+NBAND=20",
+		  "delay": 2,
+		  "retries": 3,
+		  "purge":1
+		},
+		{
+		  "command": "AT+COPS=1,2,\"21407\"",
+		  "delay": 1,
+		  "retries": 3,
+		  "purge":0
+		},
+		{
+		  "command": "AT+CSQ",
+		  "delay": 2,
+		  "retries": 6,
+		  "purge":1
+		},
+		{
+		  "command": "AT+CGATT?",
+		  "delay": 5,
+		  "retries": 10,
+		  "purge":1
+		}
+	]
+}
