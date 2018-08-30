@@ -19,11 +19,11 @@ Test firmware for CUBE version 4.1
 #KNOWN BUGS
 - Sometimes the program hangs due an interrupt issue. Hard restart is needed
 
-#Arduino IDE Installation
-https://www.tech4u.info/product-info/IoC/IoC-104-CATM1-R2/Cube3_HW_Package_II__TECH-18-20395-EN-R1.pdf
+#Arduino IDE Installation:
+- https://www.tech4u.info/product-info/IoC/IoC-104-CATM1-R2/Cube3_HW_Package_II__TECH-18-20395-EN-R1.pdf
 
 
-#Required Libraries (install via Arduino studio):
+#Required Libraries (install via Arduino IDE):
 - Using library Sodaq_UBlox_GPS-master at version 0.9.5 in folder: /path/Documents/Arduino/libraries/Sodaq_UBlox_GPS-master 
 - Using library Adafruit_NeoPixel at version 1.1.3 in folder: /path/Documents/Arduino/libraries/Adafruit_NeoPixel 
 - Using library Adafruit_Sensor-master at version 1.0.2 in folder: /path/Documents/Arduino/libraries/Adafruit_Sensor-master 
