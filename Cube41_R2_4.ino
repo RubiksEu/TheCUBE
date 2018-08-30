@@ -204,52 +204,7 @@ void sendSocketData(struct payloadData *p) {
   s = "Sent: " + AT_response.substring(i+10, i+11);
   s.toCharArray(tmpString1, 30);
   DEBUG_STREAM.println(s);
-};
-
-// sendSocketDataTcp sends data via TCP to the configured server
-void sendSocketDataTcp(struct payloadData *p) {
-  char *index_ptr;
-  unsigned char c, cH, cL;
-  uint16_t cnt;
-  char tmp2[3];
-  unsigned char response;
-  unsigned short cnt2;
-
-  DEBUG_STREAM.println("===============================");
-  DEBUG_STREAM.println("START SEND SOCK DATA FOR TCP");
-
-  send_AT_command("AT+USOCO=0,\"51.38.234.231\",7778\r\n");
-
-  sprintf(initString,
-          "{\"Device_ID\":\"%s\",\"temp\":%.2f,\"lum\":%.2f,\"x\":%.2f,\"y\":%.2f,\"z\":%.2f,\"bat\":%.2f,\"hum\":%.2f,\"db\":%.2f}",
-       DEVICE_ID, p->temperature, p->luminance, p->x_acc, p->y_acc, p->z_acc, p->battery, p->humidity, p->sound);
-
-  DEBUG_STREAM.println("initString:");
-  DEBUG_STREAM.println(initString);
-
-  response = 1;
-
-  memset(hex_str, 0x00, sizeof(hex_str));
-  //---- let's prepare HEX_string from string -----
-  cnt2 = 0;
-  for (cnt=0;cnt<strlen(initString);cnt++) {
-    c = (char)initString[cnt];
-    sprintf(tmp2, "%02X", c);
-    hex_str[cnt2++] = tmp2[0];
-    hex_str[cnt2++] = tmp2[1];
-  };
-
-  sprintf(initString, "AT+USOWR=0,%d,\"%s\"\r\n", SERVER_IP, SERVER_PORT, strlen(hex_str)/2, hex_str);
-
-  DEBUG_STREAM.println("1");
-  send_AT_command(initString);
-
-  i = AT_response.indexOf("+USOWR: ");
-
-  s = "Sent: " + AT_response.substring(i+10, i+11);
-  s.toCharArray(tmpString1, 30);
-  DEBUG_STREAM.println(s);
-};
+}
 
 // createSocket creates a UDP socket
 void createSocket() {
