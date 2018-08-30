@@ -1,10 +1,6 @@
 #ifndef DEFINES_CUBE
 #define DEFINES_CUBE
 
-// #define SERVER_IP "97.164.101.254"
-// #define SERVER_IP "77.164.101.254"
-// #define SERVER_PORT 7778
-
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 7778
 
