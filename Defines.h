@@ -4,10 +4,11 @@
 // #define SERVER_IP "97.164.101.254"
 // #define SERVER_IP "77.164.101.254"
 // #define SERVER_PORT 7778
-#define SERVER_IP "127.0.0.1"
-#define SERVER_PORT 7778
 
-#define DEVICE_ID "CUBE_4.1
+#define SERVER_IP "51.38.234.231"
+#define SERVER_PORT 10001
+
+#define DEVICE_ID "MARK_GPS_CUBE_R2_4"
 
 //--- DEFINES ------------------------------
 #define DEBUG_STREAM SerialUSB

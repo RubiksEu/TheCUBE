@@ -1,3 +1,4 @@
+//--- INCLUDES -----------------------------
 #include <Arduino.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,12 +35,13 @@ struct menuItem act_menu[5] = {
   {"RELAY", false}
 };
 
-// Software reset function
+
+
+//------SOFTWARE RESET FUNCTION---------------------------
 static inline bool nvmReady(void) {
         return NVMCTRL->INTFLAG.reg & NVMCTRL_INTFLAG_READY;
 }
 
-// banzai() resets the MCU
 __attribute__ ((long_call, section (".ramfunc")))
 static void banzai() {
 	// Disable all interrupts
@@ -59,8 +61,9 @@ static void banzai() {
 
 	while (true);
 }
+//------------------------------------------
 
-// Local Variables
+//--- VARIABLES ----------------------------
 int16_t counter;
 volatile unsigned char ENC_Button_pressed = false;
 volatile unsigned char Encoder_position_changed;
@@ -70,20 +73,25 @@ int16_t humidity;
 char tmpString[255];
 char tmpString1[255];
 int16_t sensorValue;
+//float f;
 String s, AT_response;
 uint8_t c;
 int16_t i,k;
 bool res;
+
 char initString[512];
 char hex_str[512];
+
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(1, RGB_LED_PIN, NEO_GRB);
 LSM303 accel;
+
+
+
 int MENU_pos = 0;
 int aState;
 int aLastState;
 File myFile;
 
-// The payload data which will be transmitted to the cloud
 struct payloadData {
   float temperature;
   float humidity;
@@ -106,7 +114,13 @@ char IMEI[32];
 char IMSI[32];
 
 
-// SaraR4_HEX_mode sets the modem in hex mode configuration. 0 = ASCII || 1 = HEX
+//***************************
+// 2018-06-10
+// SARA R4 HEX mode configuration
+//      INPUT:
+//              0 - HEX mode disabled
+//              1 - HEX mode enabled
+//---------------------------------------------------------------------------------
 unsigned char SaraR4_HEX_mode(unsigned char what) {
 
   char *index_ptr;
@@ -121,12 +135,11 @@ unsigned char SaraR4_HEX_mode(unsigned char what) {
 
 };
 
-// rgbLED
 void rgbLED(bool on) {
   pixels.show();
 
   if (on) {
-    setColor(0,176, 121, 201,0); //red
+    setColor(0,250, 189, 186,0); //red
 
     pixels.show();
   }
@@ -136,8 +149,6 @@ void rgbLED(bool on) {
   }
 }
 
-// actuateActuatores reads out the status from the menu array to either enable
-// or disable the CUBEs actuators
 void actuateActuatores() {
   for (int x=0; x < sizeof(act_menu) / sizeof(act_menu[0]); x++) {
     switch (x) {
@@ -160,7 +171,6 @@ void actuateActuatores() {
   }
 }
 
-// sendSocketData sends data via the created UDP socket to the configured server
 void sendSocketData(struct payloadData *p) {
   char *index_ptr;
   unsigned char c, cH, cL;
@@ -175,7 +185,7 @@ void sendSocketData(struct payloadData *p) {
 
   sprintf(initString,
           "{\"Device_ID\":\"%s\",\"temp\":%.2f,\"lum\":%.2f,\"x\":%.2f,\"y\":%.2f,\"z\":%.2f,\"bat\":%.2f,\"hum\":%.2f,\"db\":%.2f}",
-       DEVICE_ID, p->temperature, p->luminance, p->x_acc, p->y_acc, p->z_acc, p->battery, p->humidity, p->sound);
+       IMEI, p->temperature, p->luminance, p->x_acc, p->y_acc, p->z_acc, p->battery, p->humidity, p->sound);
 
   // sprintf(initString, "hallo");
 
@@ -205,8 +215,12 @@ void sendSocketData(struct payloadData *p) {
   s.toCharArray(tmpString1, 30);
   DEBUG_STREAM.println(s);
 };
+//======================================================================================================================
 
-// sendSocketDataTcp sends data via TCP to the configured server
+//*************************************************************************************************
+// 2018-07-27
+// Sending data payload
+//-------------------------------------------------------------------------------------------------
 void sendSocketDataTcp(struct payloadData *p) {
   char *index_ptr;
   unsigned char c, cH, cL;
@@ -220,9 +234,12 @@ void sendSocketDataTcp(struct payloadData *p) {
 
   send_AT_command("AT+USOCO=0,\"51.38.234.231\",7778\r\n");
 
-  sprintf(initString,
-          "{\"Device_ID\":\"%s\",\"temp\":%.2f,\"lum\":%.2f,\"x\":%.2f,\"y\":%.2f,\"z\":%.2f,\"bat\":%.2f,\"hum\":%.2f,\"db\":%.2f}",
-       DEVICE_ID, p->temperature, p->luminance, p->x_acc, p->y_acc, p->z_acc, p->battery, p->humidity, p->sound);
+  //
+  // sprintf(initString,
+  //         "{\"Device_ID\":\"%s\",\"temp\":%.2f,\"lum\":%.2f,\"x\":%.2f,\"y\":%.2f,\"z\":%.2f,\"bat\":%.2f,\"hum\":%.2f,\"db\":%.2f}",
+  //      DEVICE_ID, p->temperature, p->luminance, p->x_acc, p->y_acc, p->z_acc, p->battery, p->humidity, p->sound);
+
+  sprintf(initString,"test1234");
 
   DEBUG_STREAM.println("initString:");
   DEBUG_STREAM.println(initString);
@@ -250,8 +267,11 @@ void sendSocketDataTcp(struct payloadData *p) {
   s.toCharArray(tmpString1, 30);
   DEBUG_STREAM.println(s);
 };
+//======================================================================================================================
 
-// createSocket creates a UDP socket
+
+
+
 void createSocket() {
   DEBUG_STREAM.println("===============================");
   DEBUG_STREAM.println("START CREATE SOCKET");
@@ -263,7 +283,6 @@ void createSocket() {
   DEBUG_STREAM.println("END CREATE SOCKET");
 }
 
-// getNetworkSignal checks if and how strong the connection to the basestion is
 int getNetworkSignal() {
   DEBUG_STREAM.println("===============================");
   DEBUG_STREAM.println("START GET CSQ");
@@ -306,7 +325,7 @@ int getNetworkSignal() {
   return csq;
 }
 
-// getSocketData extracts the data coming back from the server
+
 int getSocketData() {
   DEBUG_STREAM.println("===============================");
   DEBUG_STREAM.println("START getSocketData");
@@ -332,9 +351,23 @@ int getSocketData() {
   DEBUG_STREAM.print("PCH: ");
   DEBUG_STREAM.println(pch);
 
+  // char ascii[32] = "";
+  // int c;
+  // char tmp[3];
+  //
+  // for (;pch[0] && pch[1] && sscanf(pch, "%2x", &c); pch += 2)
+  // {
+  //   sprintf(tmp, "%c", c);
+  //   strcat (ascii, tmp);
+  // }
+
+
 
   DEBUG_STREAM.print("UDP SERVER RESPONSE: ");
   DEBUG_STREAM.println(pch);
+
+  // DEBUG_STREAM.print("TO ASCII: ");
+  // DEBUG_STREAM.println(ascii);
 
   DEBUG_STREAM.println("END GET getSocketData");
   DEBUG_STREAM.println("===============================");
@@ -345,7 +378,6 @@ int getSocketData() {
   return 1;
 }
 
-// getNetworkAttachment checks if the modem is connected to the network
 int getNetworkAttachment() {
   DEBUG_STREAM.println("===============================");
   DEBUG_STREAM.println("START GET CGATT");
@@ -382,8 +414,6 @@ int getNetworkAttachment() {
 
 }
 
-
-// getIMEI retreives the IMEI
 void getIMEI() {
   DEBUG_STREAM.println("===============================");
   DEBUG_STREAM.println("GET IMEI (CGSN)");
@@ -407,7 +437,6 @@ void getIMEI() {
   DEBUG_STREAM.println(IMEI);
 }
 
-// getIMSI retreives the IMSI
 void getIMSI() {
   DEBUG_STREAM.println("===============================");
   DEBUG_STREAM.println("GET IMSI (CIMI)");
@@ -432,7 +461,7 @@ void getIMSI() {
   DEBUG_STREAM.println(IMSI);
 }
 
-// getOperator retreives the operator information (only when connected to the network)
+
 void getOperator() {
   int lastComma, secondLastComma;
 
@@ -462,7 +491,6 @@ void getOperator() {
 
 }
 
-// modemInit initializes the modem
 void modemInit() {
   //--- Enable VCC1 -------------------------------------------
   digitalWrite(VCC1_ENABLE, HIGH); // VCC1 -> ON
@@ -532,6 +560,13 @@ void modemInit() {
   delay(500);
 }
 
+
+
+
+//***************************************************************************
+// 2018-06-24
+// Sending AT command
+//---------------------------------------------------------------------------
 bool send_AT_command(const char* command_string) {
 
   int timeout, cnt;
@@ -575,8 +610,40 @@ bool send_AT_command(const char* command_string) {
 
     return 1;
 }
+//===========================================================================
 
-//setColor takes values for the red, green and blue led and also a delay
+
+
+//***************************************************************************
+// 2018-07-01
+// Find a GPS fix, but first wait a while
+//
+//--------------------------------------------------------------------------
+void find_fix(uint32_t delay_until)
+{
+    DEBUG_STREAM.println(String("delay ... ") + delay_until + String("ms"));
+    delay(delay_until);
+
+    uint32_t start = millis();
+    uint32_t timeout = 300L * 1000;
+    DEBUG_STREAM.println(String("waiting for fix ..., timeout=") + timeout + String("ms"));
+    if (sodaq_gps.scan(false, timeout)) {
+        DEBUG_STREAM.println(String(" time to find fix: ") + (millis() - start) + String("ms"));
+        DEBUG_STREAM.println(String(" datetime = ") + sodaq_gps.getDateTimeString());
+        DEBUG_STREAM.println(String(" lat = ") + String(sodaq_gps.getLat(), 7));
+        DEBUG_STREAM.println(String(" lon = ") + String(sodaq_gps.getLon(), 7));
+        DEBUG_STREAM.println(String(" num sats = ") + String(sodaq_gps.getNumberOfSatellites()));
+
+    } else {
+        DEBUG_STREAM.println("No Fix");
+    };
+};
+//===========================================================================
+
+//***************************************************************************
+//simple function which takes values for the red, green and blue led and also
+//a delay
+//---------------------------------------------------------------------------
 void setColor(int led, int redValue, int greenValue, int blueValue, int delayValue)
 {
   DEBUG_STREAM.print("setColor " );
@@ -590,7 +657,14 @@ void setColor(int led, int redValue, int greenValue, int blueValue, int delayVal
   pixels.show();
   delay(delayValue);
 }
+//===========================================================================
 
+
+//*************************************************************************
+// 2016-11-02
+// Description:
+//
+//-------------------------------------------------------------------------
 void timing_udelay(unsigned short freq) {
   unsigned short count;
   float a, b, c;
@@ -604,7 +678,14 @@ void timing_udelay(unsigned short freq) {
     pinMode(BUZZER, OUTPUT);
   };
 };
+//=========================================================================
 
+
+//*************************************************************************
+// 2016-11-02
+// Description:
+//
+//-------------------------------------------------------------------------
 void make_sound(unsigned short freq, unsigned char period) {
 
   unsigned short count;
@@ -616,7 +697,12 @@ void make_sound(unsigned short freq, unsigned char period) {
       digitalWrite(BUZZER, LOW);
   };
 };
+//=========================================================================
 
+//****************************************************************************
+// 2018-06-23
+// Encoder interrupt
+//----------------------------------------------------------------------------
 void Encoder_interrupt(){
 
   SerialUSB.print("enter_menu: ");
@@ -679,7 +765,14 @@ void Encoder_interrupt(){
        //----------------------------------------------------------
   }
 };
+//============================================================================
 
+
+
+//****************************************************************************
+// 2018-06-23
+// Encoder button interrupt
+//----------------------------------------------------------------------------
 void Encoder_button_interrupt(){
   int cnt, cnt1, a;
 
@@ -701,6 +794,10 @@ void select_button_pressed() {
   select_button = true;
 }
 
+//********************************************************************************************************
+// 2017-11-30
+// SETUP
+//--------------------------------------------------------------------------------------------------------
 void setup() {
 
   delay(2000); // time required for USB port to reconfigure after upload
@@ -845,6 +942,12 @@ void mainMenu() {
   sprintf(battery, "%0.2f V", bat);
   sprintf(sound, "%d dB", analogRead(SOUND_VALUE_PIN));
 
+  // DEBUG_STREAM.println(temperature);
+  // DEBUG_STREAM.println(humidity);
+  // DEBUG_STREAM.println(luminance);
+  // DEBUG_STREAM.println(battery);
+  // DEBUG_STREAM.println(sound);
+
   if (Encoder_position_changed) {
     menuDisplay("1", "MAIN");
 
@@ -895,6 +998,12 @@ void actMenu() {
 }
 
 void netMenu() {
+  //DEBUG_STREAM.println("NET MENU");
+
+  //char* IMEI = "004999010640000";
+  //char* IMSI = "222107701772423"; // AT+CMCI
+  //char* Operator = "Vodafone"; // AT+COPS?
+
   if (Encoder_position_changed) {
     DEBUG_STREAM.println("Net MENU display prepare");
     menuDisplay("3", "NET");
@@ -932,6 +1041,10 @@ void readAllSensorValues(struct payloadData *p) {
   p->z_acc = z_acc;
 }
 
+
+//*******************************************************************************************************
+// M A I N   L O O P
+//-------------------------------------------------------------------------------------------------------
 void loop() {
 
   while(1) {
@@ -961,6 +1074,8 @@ void loop() {
     yield();
   }
 }
+
+
 
 void connectivityLoop() {
   int signalStrength = 99;
