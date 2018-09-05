@@ -4,7 +4,7 @@
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 7778
 
-#define DEVICE_ID "CUBE_4.1
+#define DEVICE_ID "CUBE_4.1"
 
 //--- DEFINES ------------------------------
 #define DEBUG_STREAM SerialUSB
